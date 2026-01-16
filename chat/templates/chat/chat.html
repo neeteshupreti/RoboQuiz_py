@@ -1,216 +1,244 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Groq C++ Tutor</title>
+<title>StoryLearnC++ Chatbot</title>
+
 <style>
-  /* Base styles */
-  body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: #f0f2f5;
-    margin: 0;
-    padding: 0;
-  }
+/* ================= GLOBAL ================= */
+* { margin:0; padding:0; box-sizing:border-box; font-family:"Segoe UI", sans-serif; }
+body { background:#f0f2f5; color:#1f2937; }
 
-  h2 {
-    text-align: center;
-    color: #1a73e8;
-    margin: 20px 0;
-  }
+/* ================= NAVBAR ================= */
+header {
+    background: #233b8f;
+    border-bottom: 3px solid #1e90ff;
+}
+.navbar {
+    max-width:1200px;
+    margin:auto;
+    padding:14px 30px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+}
+.logo { color:#fff; font-weight:700; font-size:18px; }
+.nav-links {
+    display:flex;
+    align-items:center;
+    gap:20px;
+}
+.nav-links a {
+    color:#fff;
+    text-decoration:none;
+    padding:6px 14px;
+    border-radius:6px;
+    transition:0.3s;
+}
+.nav-links a:hover, .nav-links a.active {
+    background:#fbbf24;
+    color:#1f2937;
+}
 
-  /* Chat box container */
-  #chat-container {
-    max-width: 800px;
-    margin: auto;
-    background: white;
-    border-radius: 12px;
-    padding: 20px;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
-    display: flex;
-    flex-direction: column;
-    height: 70vh;
-  }
+/* ================= PAGE TITLE ================= */
+.title {
+    text-align:center;
+    margin:20px 0 15px;
+    font-size:22px;
+    color:#233b8f;
+    font-weight:600;
+}
 
-  #chat-box {
-    flex: 1;
-    overflow-y: auto;
-    padding-right: 10px;
-    display: flex;
-    flex-direction: column;
-  }
+/* ================= CHAT WRAPPER ================= */
+.chat-wrapper {
+    max-width:900px;
+    margin:auto;
+    background:#fff;
+    border-radius:12px;
+    padding:20px;
+    box-shadow:0 8px 20px rgba(0,0,0,0.1);
+    display:flex;
+    flex-direction:column;
+    height:70vh;
+}
 
-  /* Chat message bubbles */
-  .message {
-    margin: 6px 0;
-    padding: 12px 16px;
-    border-radius: 12px;
-    max-width: 70%;
-    word-wrap: break-word;
-    line-height: 1.4;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-  }
+/* ================= CHAT BOX ================= */
+#chat-box {
+    flex:1;
+    overflow-y:auto;
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    padding-right:5px;
+}
 
-  /* User messages: right */
-  .message.user {
-    background: #d2e3fc;
-    color: #1a73e8;
-    align-self: flex-end;
-    border-bottom-right-radius: 0;
-    text-align: right;
-  }
+/* ================= CHAT BUBBLES ================= */
+.message {
+    padding:12px 18px;
+    border-radius:12px;
+    max-width:70%;
+    word-wrap:break-word;
+    line-height:1.4;
+    box-shadow:0 2px 6px rgba(0,0,0,0.1);
+}
+.message.user {
+    background:#d2e3fc;
+    color:#1a73e8;
+    align-self:flex-end;
+    border-bottom-right-radius:0;
+    text-align:right;
+}
+.message.bot {
+    background:#f1f3f4;
+    color:#202124;
+    align-self:flex-start;
+    border-bottom-left-radius:0;
+    text-align:left;
+}
+.short-text, .full-text { display:inline; }
+.read-more, .read-less {
+    color:#1a73e8;
+    text-decoration:none;
+    cursor:pointer;
+    font-weight:bold;
+    margin-left:5px;
+}
 
-  /* Bot messages: left */
-  .message.bot {
-    background: #f1f3f4;
-    color: #202124;
-    align-self: flex-start;
-    border-bottom-left-radius: 0;
-    text-align: left;
-  }
+/* ================= INPUT AREA ================= */
+#input-container {
+    display:flex;
+    margin-top:15px;
+    gap:10px;
+}
+#user-input {
+    flex:1;
+    padding:12px 16px;
+    border-radius:20px;
+    border:1px solid #ccc;
+    font-size:16px;
+}
+#send-btn {
+    background:#233b8f;
+    color:white;
+    border:none;
+    border-radius:50%;
+    width:50px;
+    height:50px;
+    cursor:pointer;
+    font-size:20px;
+    transition:0.2s;
+}
+#send-btn:hover { background:#1e2d79; }
 
-  /* Read more / show less */
-  .short-text, .full-text { display: inline; }
-  .read-more, .read-less {
-    color: #1a73e8;
-    text-decoration: none;
-    cursor: pointer;
-    font-weight: bold;
-    margin-left: 5px;
-  }
+/* ================= SCROLLBAR ================= */
+#chat-box::-webkit-scrollbar { width:8px; }
+#chat-box::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.2); border-radius:4px; }
 
-  /* Input area */
-  #input-container {
-    display: flex;
-    margin-top: 10px;
-  }
-
-  #user-input {
-    flex: 1;
-    padding: 12px 16px;
-    border-radius: 20px;
-    border: 1px solid #ccc;
-    font-size: 16px;
-  }
-
-  #send-btn {
-    background: #1a73e8;
-    color: white;
-    border: none;
-    border-radius: 50%;
-    width: 50px;
-    height: 50px;
-    margin-left: 10px;
-    cursor: pointer;
-    font-size: 20px;
-    transition: 0.2s;
-  }
-
-  #send-btn:hover {
-    background: #1669c1;
-  }
-
-  /* Scrollbar styling */
-  #chat-box::-webkit-scrollbar {
-    width: 8px;
-  }
-
-  #chat-box::-webkit-scrollbar-thumb {
-    background: rgba(0,0,0,0.2);
-    border-radius: 4px;
-  }
-
-  @media (max-width: 600px) {
-    #chat-container { height: 60vh; }
-    .message { max-width: 90%; }
-  }
+/* ================= RESPONSIVE ================= */
+@media(max-width:768px){
+    .chat-wrapper { height:60vh; }
+    .message { max-width:90%; }
+    .nav-links { flex-direction:column; gap:10px; margin-top:10px; }
+}
 </style>
 </head>
 <body>
 
-<h2>Groq Powered C++ Tutor</h2>
+<!-- ================= NAVBAR ================= -->
+<header>
+    <div class="navbar">
+        <div class="logo">📘 StoryLearnC++</div>
+        <div class="nav-links">
+            <a href="{% url 'accounts:landing' %}">Home</a>
+            <a href="#">Chapters</a>
+            <a href="#" class="active">Chatbot</a>
+            <a href="{% url 'accounts:dashboard' %}">Dashboard</a>
+            <a href="{% url 'accounts:logout' %}">Logout</a>
+        </div>
+    </div>
+</header>
 
-<div id="chat-container">
-  <div id="chat-box">
-    {% for chat in messages %}
-      <div class="message user">
-        <b>You:</b> {{ chat.user_message }}
-      </div>
-      <div class="message bot">
-        <b>Bot:</b>
-        <span class="short-text">
-          {{ chat.bot_response|truncatechars:100 }}
-          {% if chat.bot_response|length > 100 %}... <a class="read-more">Read more</a>{% endif %}
-        </span>
-        <span class="full-text" style="display:none;">
-          {{ chat.bot_response }} <a class="read-less">Show less</a>
-        </span>
-      </div>
-    {% endfor %}
-  </div>
+<!-- ================= PAGE TITLE ================= -->
+<div class="title">C++ Chatbot</div>
 
-  <div id="input-container">
-    <input type="text" id="user-input" placeholder="Ask your C++ doubts...">
-    <button id="send-btn" onclick="sendMessage()">&#9658;</button>
-  </div>
+<!-- ================= CHAT BOX ================= -->
+<div class="chat-wrapper">
+    <div id="chat-box">
+        {% for chat in messages %}
+            <div class="message user">
+                <b>You:</b> {{ chat.user_message }}
+            </div>
+            <div class="message bot">
+                <b>Bot:</b>
+                <span class="short-text">
+                    {{ chat.bot_response|truncatechars:100 }}
+                    {% if chat.bot_response|length > 100 %}... <a class="read-more">Read more</a>{% endif %}
+                </span>
+                <span class="full-text" style="display:none;">
+                    {{ chat.bot_response }} <a class="read-less">Show less</a>
+                </span>
+            </div>
+        {% endfor %}
+    </div>
+
+    <div id="input-container">
+        <input type="text" id="user-input" placeholder="Ask your C++ doubts...">
+        <button id="send-btn" onclick="sendMessage()">&#9658;</button>
+    </div>
 </div>
 
+<!-- ================= SCRIPT ================= -->
 <script>
-  // Toggle Read More / Show Less
-  document.addEventListener('click', function(e){
-      if(e.target.classList.contains('read-more')){
-          const parent = e.target.closest('.message');
-          parent.querySelector('.short-text').style.display = 'none';
-          parent.querySelector('.full-text').style.display = 'inline';
-      }
-      if(e.target.classList.contains('read-less')){
-          const parent = e.target.closest('.message');
-          parent.querySelector('.short-text').style.display = 'inline';
-          parent.querySelector('.full-text').style.display = 'none';
-      }
-  });
+document.addEventListener('click', function(e){
+    if(e.target.classList.contains('read-more')){
+        const parent = e.target.closest('.message');
+        parent.querySelector('.short-text').style.display='none';
+        parent.querySelector('.full-text').style.display='inline';
+    }
+    if(e.target.classList.contains('read-less')){
+        const parent = e.target.closest('.message');
+        parent.querySelector('.short-text').style.display='inline';
+        parent.querySelector('.full-text').style.display='none';
+    }
+});
 
-  // Send message to backend
-  function sendMessage() {
-      let msgInput = document.getElementById("user-input");
-      let msg = msgInput.value.trim();
-      if (!msg) return;
+function sendMessage() {
+    let msgInput = document.getElementById("user-input");
+    let msg = msgInput.value.trim();
+    if(!msg) return;
 
-      fetch("", {
-          method: "POST",
-          headers: {
-              "Content-Type": "application/json",
-              "X-CSRFToken": "{{ csrf_token }}"
-          },
-          body: JSON.stringify({ message: msg })
-      })
-      .then(res => res.json())
-      .then(data => {
-          const chatBox = document.getElementById("chat-box");
+    fetch("", {
+        method:"POST",
+        headers:{
+            "Content-Type":"application/json",
+            "X-CSRFToken":"{{ csrf_token }}"
+        },
+        body:JSON.stringify({message:msg})
+    })
+    .then(res=>res.json())
+    .then(data=>{
+        const chatBox=document.getElementById("chat-box");
 
-          // Append user message
-          const userMsgDiv = document.createElement("div");
-          userMsgDiv.classList.add("message", "user");
-          userMsgDiv.innerHTML = `<b>You:</b> ${msg}`;
-          chatBox.appendChild(userMsgDiv);
+        const userMsgDiv=document.createElement("div");
+        userMsgDiv.classList.add("message","user");
+        userMsgDiv.innerHTML=`<b>You:</b> ${msg}`;
+        chatBox.appendChild(userMsgDiv);
 
-          // Append bot response
-          const botMsgDiv = document.createElement("div");
-          botMsgDiv.classList.add("message", "bot");
-          const botContent = data.response.length > 100
-              ? `<span class="short-text">${data.response.slice(0,100)}... <a class="read-more">Read more</a></span>
-                 <span class="full-text" style="display:none;">${data.response} <a class="read-less">Show less</a></span>`
-              : `<span>${data.response}</span>`;
-          botMsgDiv.innerHTML = `<b>Bot:</b> ${botContent}`;
-          chatBox.appendChild(botMsgDiv);
+        const botMsgDiv=document.createElement("div");
+        botMsgDiv.classList.add("message","bot");
+        const botContent=data.response.length>100
+            ? `<span class="short-text">${data.response.slice(0,100)}... <a class="read-more">Read more</a></span>
+               <span class="full-text" style="display:none;">${data.response} <a class="read-less">Show less</a></span>`
+            : `<span>${data.response}</span>`;
+        botMsgDiv.innerHTML=`<b>Bot:</b> ${botContent}`;
+        chatBox.appendChild(botMsgDiv);
 
-          // Scroll to bottom
-          chatBox.scrollTop = chatBox.scrollHeight;
-
-          // Clear input
-          msgInput.value = "";
-      });
-  }
+        chatBox.scrollTop=chatBox.scrollHeight;
+        msgInput.value="";
+    });
+}
 </script>
 
 </body>

@@ -3,9 +3,14 @@ from django.contrib.auth.models import User
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
+from django.shortcuts import render, redirect
+from .forms import ContactForm
+from django.contrib import messages
 
-def home(request):
-    return render(request, "accounts/landing.html")  # rename according to your landing page template
+# Landing page (HOME)
+def landing_view(request):
+    return render(request, "accounts/landing.html")
+
 
 # Signup / Register
 def register_view(request):
@@ -37,26 +42,42 @@ def register_view(request):
 
     return render(request, "accounts/register.html")
 
+
 # Login
 def login_view(request):
     if request.method == "POST":
         email = request.POST.get("email")
         password = request.POST.get("password")
+
         user = authenticate(request, username=email, password=password)
-        if user is not None:
+        if user:
             login(request, user)
             return redirect('accounts:dashboard')
         else:
             messages.error(request, "Invalid credentials")
             return redirect('accounts:login')
+
     return render(request, "accounts/login.html")
+
 
 # Dashboard (requires login)
 @login_required(login_url='accounts:login')
 def dashboard_view(request):
-    return render(request, "accounts/dashboard.html", {"user": request.user})
+    return render(request, "accounts/dashboard.html")
+
 
 # Logout
 def logout_view(request):
     logout(request)
     return redirect('accounts:landing')
+
+def contact_view(request):
+    if request.method == "POST":
+        form = ContactForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Your message has been sent successfully!")
+            return redirect('accounts:contact')
+    else:
+        form = ContactForm()
+    return render(request, "accounts/contact.html", {"form": form})

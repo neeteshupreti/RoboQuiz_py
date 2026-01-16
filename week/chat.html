@@ -1,163 +1,151 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>C++ Chatbot</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Groq C++ Tutor</title>
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Segoe UI", sans-serif;
+}
+body {
+    background: #ffffff;
+    color: #1f2937;
+}
 
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: "Segoe UI", sans-serif;
-        }
+/* ================= NAVBAR ================= */
+header {
+    background: #233b8f;
+    border-bottom: 3px solid #1e90ff;
+}
+.navbar {
+    max-width: 1200px;
+    margin: auto;
+    padding: 14px 30px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.logo {
+    color: #fff;
+    font-weight: 700;
+    font-size: 18px;
+}
+.nav-links {
+    display: flex;
+    align-items: center;
+    gap: 28px;
+    color: #fff;
+    font-size: 15px;
+}
+.nav-links .profile img {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+}
 
-        body {
-            background: #ffffff;
-            color: #1f2937;
-        }
+/* ================= PAGE TITLE ================= */
+.title {
+    text-align: center;
+    margin: 30px 0 20px;
+    font-size: 20px;
+    color: #233b8f;
+    font-weight: 600;
+}
 
-        /* ================= NAVBAR ================= */
-        header {
-            background: #233b8f;
-            border-bottom: 3px solid #1e90ff;
-        }
+/* ================= CHAT CONTAINER ================= */
+.chat-wrapper {
+    max-width: 900px;
+    margin: auto;
+    border: 1.5px solid #9ca3af;
+    border-radius: 8px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    height: 70vh;
+}
+.chat-area {
+    flex: 1;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+}
 
-        .navbar {
-            max-width: 1200px;
-            margin: auto;
-            padding: 14px 30px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
+/* ================= CHAT BUBBLES ================= */
+.bot-message {
+    background: #e5e5e5;
+    padding: 14px 18px;
+    border-radius: 12px;
+    width: fit-content;
+    max-width: 60%;
+    margin-bottom: 18px;
+    font-size: 14px;
+    line-height: 1.5;
+}
+.user-message {
+    background: #233b8f;
+    color: #fff;
+    padding: 12px 18px;
+    border-radius: 18px;
+    width: fit-content;
+    margin-left: auto;
+    margin-bottom: 18px;
+    font-size: 14px;
+}
+.bot-message b {
+    font-weight: 600;
+}
+.short-text, .full-text { display: inline; }
+.read-more, .read-less {
+    color: #1a73e8;
+    text-decoration: none;
+    cursor: pointer;
+    font-weight: bold;
+    margin-left: 5px;
+}
 
-        .logo {
-            color: #fff;
-            font-weight: 700;
-            font-size: 18px;
-        }
+/* ================= INPUT BAR ================= */
+.chat-input {
+    margin-top: 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+.chat-input input {
+    flex: 1;
+    padding: 12px 16px;
+    border-radius: 20px;
+    border: 1.5px solid #9ca3af;
+    outline: none;
+    font-size: 14px;
+}
+.send-btn {
+    width: 38px;
+    height: 38px;
+    background: #233b8f;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 16px;
+    cursor: pointer;
+}
 
-        .nav-links {
-            display: flex;
-            align-items: center;
-            gap: 28px;
-            color: #fff;
-            font-size: 15px;
-        }
+/* ================= SCROLLBAR ================= */
+.chat-area::-webkit-scrollbar { width: 8px; }
+.chat-area::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.2); border-radius: 4px; }
 
-        .nav-links span {
-            cursor: pointer;
-        }
-
-        .nav-links .active {
-            font-weight: 700;
-        }
-
-        .profile img {
-            width: 34px;
-            height: 34px;
-            border-radius: 50%;
-            background: #e5e7eb;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 12px;
-            color: #6b7280;
-        }
-
-        /* ================= PAGE TITLE ================= */
-        .title {
-            text-align: center;
-            margin: 30px 0 20px;
-            font-size: 20px;
-            color: #233b8f;
-            font-weight: 600;
-        }
-
-        /* ================= CHAT CONTAINER ================= */
-        .chat-wrapper {
-            max-width: 900px;
-            margin: auto;
-            border: 1.5px solid #9ca3af;
-            border-radius: 8px;
-            padding: 20px;
-        }
-
-        .chat-area {
-            min-height: 300px;
-        }
-
-        /* ================= CHAT BUBBLES ================= */
-        .bot-message {
-            background: #e5e5e5;
-            padding: 14px 18px;
-            border-radius: 12px;
-            width: fit-content;
-            max-width: 60%;
-            margin-bottom: 18px;
-            font-size: 14px;
-            line-height: 1.5;
-        }
-
-        .user-message {
-            background: #233b8f;
-            color: #fff;
-            padding: 12px 18px;
-            border-radius: 18px;
-            width: fit-content;
-            margin-left: auto;
-            margin-bottom: 18px;
-            font-size: 14px;
-        }
-
-        .bot-message b {
-            font-weight: 600;
-        }
-
-        /* ================= INPUT BAR ================= */
-        .chat-input {
-            margin-top: 20px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .chat-input input {
-            flex: 1;
-            padding: 12px 16px;
-            border-radius: 20px;
-            border: 1.5px solid #9ca3af;
-            outline: none;
-            font-size: 14px;
-        }
-
-        .send-btn {
-            width: 38px;
-            height: 38px;
-            background: #233b8f;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #fff;
-            font-size: 16px;
-            cursor: pointer;
-        }
-
-        /* ================= RESPONSIVE ================= */
-        @media (max-width: 768px) {
-            .chat-wrapper {
-                margin: 0 16px;
-            }
-
-            .bot-message,
-            .user-message {
-                max-width: 80%;
-            }
-        }
-    </style>
+/* ================= RESPONSIVE ================= */
+@media (max-width: 768px) {
+    .chat-wrapper { margin: 0 16px; }
+    .bot-message, .user-message { max-width: 80%; }
+}
+</style>
 </head>
 <body>
 
@@ -169,39 +157,98 @@
             <span>Home</span>
             <span>Chapters</span>
             <span class="active">Chatbot</span>
-            <div class="profile"><img src="./images/pp2.avif" alt="Profile"></div>
+            <div class="profile"><img src="{% static 'accounts/images/pp2.avif' %}" alt="Profile"></div>
         </div>
     </div>
 </header>
 
 <!-- ================= TITLE ================= -->
-<div class="title">C++ chatbot</div>
+<div class="title">C++ Chatbot</div>
 
 <!-- ================= CHAT BOX ================= -->
 <div class="chat-wrapper">
     <div class="chat-area">
-
-        <div class="bot-message">
-            Welcome! Ask me about variables, function etc
-        </div>
-
-        <div class="user-message">
-            what is function?
-        </div>
-
-        <div class="bot-message">
-            Function is c++ is block of code that perform specific
-            task and run when called <b>Readmore</b>
-        </div>
-
+        {% for chat in messages %}
+            <div class="user-message">
+                <b>You:</b> {{ chat.user_message }}
+            </div>
+            <div class="bot-message">
+                <b>Bot:</b>
+                <span class="short-text">
+                    {{ chat.bot_response|truncatechars:100 }}
+                    {% if chat.bot_response|length > 100 %}... <a class="read-more">Read more</a>{% endif %}
+                </span>
+                <span class="full-text" style="display:none;">
+                    {{ chat.bot_response }} <a class="read-less">Show less</a>
+                </span>
+            </div>
+        {% endfor %}
     </div>
 
     <!-- ================= INPUT ================= -->
     <div class="chat-input">
-        <input type="text" placeholder="Ask your c++ doubts">
-        <div class="send-btn">➤</div>
+        <input type="text" id="user-input" placeholder="Ask your C++ doubts...">
+        <div class="send-btn" onclick="sendMessage()">➤</div>
     </div>
 </div>
+
+<script>
+// Toggle Read More / Show Less
+document.addEventListener('click', function(e){
+    if(e.target.classList.contains('read-more')){
+        const parent = e.target.closest('.bot-message');
+        parent.querySelector('.short-text').style.display = 'none';
+        parent.querySelector('.full-text').style.display = 'inline';
+    }
+    if(e.target.classList.contains('read-less')){
+        const parent = e.target.closest('.bot-message');
+        parent.querySelector('.short-text').style.display = 'inline';
+        parent.querySelector('.full-text').style.display = 'none';
+    }
+});
+
+// Send message to backend
+function sendMessage() {
+    let msgInput = document.getElementById("user-input");
+    let msg = msgInput.value.trim();
+    if (!msg) return;
+
+    fetch("", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": "{{ csrf_token }}"
+        },
+        body: JSON.stringify({ message: msg })
+    })
+    .then(res => res.json())
+    .then(data => {
+        const chatBox = document.querySelector(".chat-area");
+
+        // Append user message
+        const userDiv = document.createElement("div");
+        userDiv.classList.add("user-message");
+        userDiv.innerHTML = `<b>You:</b> ${msg}`;
+        chatBox.appendChild(userDiv);
+
+        // Append bot response
+        const botDiv = document.createElement("div");
+        botDiv.classList.add("bot-message");
+        const botContent = data.response.length > 100
+            ? `<span class="short-text">${data.response.slice(0,100)}... <a class="read-more">Read more</a></span>
+               <span class="full-text" style="display:none;">${data.response} <a class="read-less">Show less</a></span>`
+            : `<span>${data.response}</span>`;
+        botDiv.innerHTML = `<b>Bot:</b> ${botContent}`;
+        chatBox.appendChild(botDiv);
+
+        // Scroll to bottom
+        chatBox.scrollTop = chatBox.scrollHeight;
+
+        // Clear input
+        msgInput.value = "";
+    });
+}
+</script>
 
 </body>
 </html>
