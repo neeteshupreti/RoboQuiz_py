@@ -1,13 +1,5 @@
-<<<<<<< HEAD
-from django.apps import AppConfig
-
+from django.apps import AppConfig  # <-- fix typo
 
 class ChatConfig(AppConfig):
+    default_auto_field = 'django.db.models.BigAutoField'
     name = 'chat'
-=======
-from django.apps import AppConfig
-
-
-class ChatConfig(AppConfig):
-    name = 'chat'
->>>>>>> 3d5c8dafa1c7522f9648891421193305a5191b1e
